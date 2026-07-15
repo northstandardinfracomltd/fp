@@ -30,68 +30,71 @@ export default function App() {
   const [selectedAircraft, setSelectedAircraft] = useState<string>('');
 
   useEffect(() => {
-    // Dynamically update page language for Google crawler
-    document.documentElement.lang = currentLang;
+    try {
+      // Dynamically update page language for Google crawler
+      document.documentElement.lang = currentLang;
 
-    // Ultra-optimized localized SEO Meta definitions
-    const seoMeta: Record<Language, { title: string; description: string; keywords: string }> = {
-      en: {
-        title: "FlyPerceval | Helicopter Ibiza, Monaco Helicopter & Jet Charter",
-        description: "Direct operator of private flights since 2003. Book Helicopter Ibiza, Monaco Helicopter, Mallorca Ibiza helicopter, and Malta helicopter flights at direct-operator prices.",
-        keywords: "helicopter ibiza, mallorca ibiza helicopter, monaco helicopter, malta helicopter, helicopter charter ibiza, private flight monaco, mallorca ibiza charter helicopter, helicopter rental, private jet charter ibiza"
-      },
-      fr: {
-        title: "FlyPerceval | Hélicoptère Ibiza, Monaco Hélicoptère & Jet Privé",
-        description: "Opérateur direct de vols privés depuis 2003. Réservez votre vol en hélicoptère à Ibiza, Monaco, Majorque et Malte au meilleur tarif direct exploitant.",
-        keywords: "helicoptere ibiza, mallorca ibiza helicoptere, monaco helicoptere, malte helicoptere, location helicoptere ibiza, vol prive monaco, mallorca ibiza charter helicoptere, location jet prive"
-      },
-      de: {
-        title: "FlyPerceval | Hubschrauber Ibiza, Monaco Hubschrauber & Privatjet",
-        description: "Direkter Betreiber von Privatflügen seit 2003. Hubschrauber Ibiza, Monaco Hubschrauber, Mallorca Ibiza und Malta Flüge zum unschlagbaren Direktpreis.",
-        keywords: "hubschrauber ibiza, mallorca ibiza hubschrauber, monaco hubschrauber, malta hubschrauber, hubschrauber charter ibiza, privatjet buchen"
-      },
-      nl: {
-        title: "FlyPerceval | Helikopter Ibiza, Monaco Helikopter & Privéjet",
-        description: "Directe operator van privé vluchten sinds 2003. Helikopter Ibiza, Monaco helikopter, Mallorca en Malta transfers tegen directe operator tarieven.",
-        keywords: "helikopter ibiza, mallorca ibiza helikopter, monaco helikopter, malta helikopter, helikopter huren ibiza, prive jet huren"
-      },
-      es: {
-        title: "FlyPerceval | Helicóptero Ibiza, Mónaco Helicóptero y Jet Privado",
-        description: "Operador directo de vuelos privados desde 2003. Chárter de helicóptero en Ibiza, Mónaco, Mallorca y Malta a precios directos sin intermediarios.",
-        keywords: "helicoptero ibiza, mallorca ibiza helicoptero, monaco helicoptero, malta helicoptero, alquiler helicoptero ibiza, vuelo privado monaco"
+      // Ultra-optimized localized SEO Meta definitions
+      const seoMeta: Record<Language, { title: string; description: string; keywords: string }> = {
+        en: {
+          title: "FlyPerceval | Helicopter Ibiza, Monaco Helicopter & Jet Charter",
+          description: "Direct operator of private flights since 2003. Book Helicopter Ibiza, Monaco Helicopter, Mallorca Ibiza helicopter, and Malta helicopter flights at direct-operator prices.",
+          keywords: "helicopter ibiza, mallorca ibiza helicopter, monaco helicopter, malta helicopter, helicopter charter ibiza, private flight monaco, mallorca ibiza charter helicopter, helicopter rental, private jet charter ibiza"
+        },
+        fr: {
+          title: "FlyPerceval | Hélicoptère Ibiza, Monaco Hélicoptère & Jet Privé",
+          description: "Opérateur direct de vols privés depuis 2003. Réservez votre vol en hélicoptère à Ibiza, Monaco, Majorque et Malte au meilleur tarif direct exploitant.",
+          keywords: "helicoptere ibiza, mallorca ibiza helicoptere, monaco helicoptere, malte helicoptere, location helicoptere ibiza, vol prive monaco, mallorca ibiza charter helicoptere, location jet prive"
+        },
+        de: {
+          title: "FlyPerceval | Hubschrauber Ibiza, Monaco Hubschrauber & Privatjet",
+          description: "Direkter Betreiber von Privatflügen seit 2003. Hubschrauber Ibiza, Monaco Hubschrauber, Mallorca Ibiza und Malta Flüge zum unschlagbaren Direktpreis.",
+          keywords: "hubschrauber ibiza, mallorca ibiza hubschrauber, monaco hubschrauber, malta hubschrauber, hubschrauber charter ibiza, privatjet buchen"
+        },
+        nl: {
+          title: "FlyPerceval | Helikopter Ibiza, Monaco Helikopter & Privéjet",
+          description: "Directe operator van privé vluchten sinds 2003. Helikopter Ibiza, Monaco helikopter, Mallorca en Malta transfers tegen directe operator tarieven.",
+          keywords: "helikopter ibiza, mallorca ibiza helikopter, monaco helikopter, malta helikopter, helikopter huren ibiza, prive jet huren"
+        },
+        es: {
+          title: "FlyPerceval | Helicóptero Ibiza, Mónaco Helicóptero y Jet Privado",
+          description: "Operador directo de vuelos privados desde 2003. Chárter de helicóptero en Ibiza, Mónaco, Mallorca y Malta a precios directos sin intermediarios.",
+          keywords: "helicoptero ibiza, mallorca ibiza helicoptero, monaco helicoptero, malta helicoptero, alquiler helicoptero ibiza, vuelo privado monaco"
+        }
+      };
+
+      const currentMeta = seoMeta[currentLang] || seoMeta.en;
+
+      // 1. Set document title
+      document.title = currentMeta.title;
+
+      // 2. Set meta description
+      let descMeta = document.querySelector('meta[name="description"]');
+      if (!descMeta) {
+        descMeta = document.createElement('meta');
+        descMeta.setAttribute('name', 'description');
+        document.head.appendChild(descMeta);
       }
-    };
+      descMeta.setAttribute('content', currentMeta.description);
 
-    const currentMeta = seoMeta[currentLang] || seoMeta.en;
+      // 3. Set meta keywords
+      let keywordsMeta = document.querySelector('meta[name="keywords"]');
+      if (!keywordsMeta) {
+        keywordsMeta = document.createElement('meta');
+        keywordsMeta.setAttribute('name', 'keywords');
+        document.head.appendChild(keywordsMeta);
+      }
+      keywordsMeta.setAttribute('content', currentMeta.keywords);
 
-    // 1. Set document title
-    document.title = currentMeta.title;
+      // 4. Update Open Graph titles for social / messenger snippet crawlers
+      const ogTitle = document.querySelector('meta[property="og:title"]');
+      if (ogTitle) ogTitle.setAttribute('content', currentMeta.title);
 
-    // 2. Set meta description
-    let descMeta = document.querySelector('meta[name="description"]');
-    if (!descMeta) {
-      descMeta = document.createElement('meta');
-      descMeta.setAttribute('name', 'description');
-      document.head.appendChild(descMeta);
+      const ogDesc = document.querySelector('meta[property="og:description"]');
+      if (ogDesc) ogDesc.setAttribute('content', currentMeta.description);
+    } catch (error) {
+      console.warn("SEO head updates deferred:", error);
     }
-    descMeta.setAttribute('content', currentMeta.description);
-
-    // 3. Set meta keywords
-    let keywordsMeta = document.querySelector('meta[name="keywords"]');
-    if (!keywordsMeta) {
-      keywordsMeta = document.createElement('meta');
-      keywordsMeta.setAttribute('name', 'keywords');
-      document.head.appendChild(keywordsMeta);
-    }
-    keywordsMeta.setAttribute('content', currentMeta.keywords);
-
-    // 4. Update Open Graph titles for social / messenger snippet crawlers
-    const ogTitle = document.querySelector('meta[property="og:title"]');
-    if (ogTitle) ogTitle.setAttribute('content', currentMeta.title);
-
-    const ogDesc = document.querySelector('meta[property="og:description"]');
-    if (ogDesc) ogDesc.setAttribute('content', currentMeta.description);
-
   }, [currentLang]);
 
   const t = translations[currentLang] || translations.fr;
